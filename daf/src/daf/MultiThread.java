@@ -88,43 +88,38 @@ public class MultiThread extends Thread {
 	/*
 	 * A set is complete if it includes all arguments that are acceptable w.r.t. it
 	 */
-	public  boolean complete() {
-		//iterate over arguments
-		//iterate over members of the set
-		
-		for(int i=0; i<size; i++) {
-			//identify attackers of the member
-			boolean acceptable =true;
-			for(int j=0; j<size; j++ ) {
-				if(attacks[j][i]==1) {
-					acceptable=false;
-					for(int k=0; k<set.length;k++) {
-						if(set[k]==1) {
-							if(attacks[k][j]==1) {
-								acceptable=true;
+
+	private boolean complete() { //iterate over arguments //iterate over members of the set 
+		for(int i=0; i<size; i++) { //identify attackers of the member
+			// if i is not member of the set
+			if(set[i]==0) {
+				//assume i is acceptable
+				boolean acceptable = true;
+				for(int k=0; k<size; k++) {
+					// if k attacks i 
+					if(attacks[k][i]==1) {
+						//then the attack on i by k is defended by a member j the set
+						boolean attacked_by_set = false;
+						for(int j=0; j<size;j++) {
+							if(set[j]==1 && attacks[j][k]==1) {
+								attacked_by_set=true; 
+								break;
 							}
 						}
-					}
-					if(acceptable && !in_conflict_with_set(i,set) && set[i]==0) {
-						return false;
+						if(!attacked_by_set) {
+							acceptable = false;
+							break;
+						}
 					}
 				}
+				if(acceptable) {
+					return false;
+				}
 			}
-		}
+		} 
 		return true;
 	}
-
-
-	private  boolean in_conflict_with_set(int v, int[] set) {
-		for(int i=0;i<set.length;i++) {
-			if(set[i]==1) {
-				if(attacks[i][v]==1 || attacks[v][i]==1) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+	
 } 
 
 
